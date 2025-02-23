@@ -1,4 +1,4 @@
-import { hash } from "bcryptjs";
+import { hash, compare } from "bcryptjs";
 // import { sign } from "jsonwebtoken";
 import pkg from "jsonwebtoken";
 const { sign } = pkg;
@@ -30,6 +30,10 @@ UserSchema.methods.generateJWT = async function () {
   return await sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
+};
+
+UserSchema.methods.comparePassword = async function (enteredPassword) {
+  return await compare(enteredPassword, this.password);
 };
 
 const User = model("User", UserSchema);
