@@ -1,4 +1,4 @@
-import pkg from 'jsonwebtoken';
+import pkg from "jsonwebtoken";
 const { verify } = pkg;
 import User from "../models/User.js";
 
@@ -19,6 +19,16 @@ export const authGuard = async (req, res, next) => {
     }
   } else {
     let error = new Error("Not authorized , No Token");
+    error.statusCode = 401;
+    next(error);
+  }
+};
+
+export const adminGuard = (req, res, next) => {
+  if (req.user && req.user.admin) {
+    next();
+  } else {
+    let error = new Error("Not aithorized as an admin");
     error.statusCode = 401;
     next(error);
   }
