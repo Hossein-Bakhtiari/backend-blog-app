@@ -1,22 +1,53 @@
 import { uploadPicture } from "../middleware/uploadPictureMiddleware.js";
 import User from "../models/User.js";
 import { fileRemover } from "../utils/fileRemover.js";
+// const registerUser = async (req, res, next) => {
+//   try {
+//     const { name, email,  } = req.body;
+
+//     //check whether the user exist or not
+//     let user = await User.findOne({ email });
+
+//     if (user) {
+//       throw new Error("User have already registered");
+//     }
+
+//     // creating a new user
+//     user = await User.create({
+//       name,
+//       email,
+//       password,
+//     });
+
+//     return res.status(201).json({
+//       _id: user.id,
+//       avatar: user.avatar,
+//       name: user.name,
+//       email: user.email,
+//       verified: user.verified,
+//       admin: user.admin,
+//       token: await user.generateJWT(),
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 const registerUser = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password } = req.body; // 👈 password رو هم اضافه کردم
 
-    //check whether the user exist or not
+    // check whether the user exists or not
     let user = await User.findOne({ email });
 
     if (user) {
-      throw new Error("User have already registered");
+      throw new Error("User already registered");
     }
 
     // creating a new user
     user = await User.create({
       name,
       email,
-      password,
+      password, // 👈 حالا password موجوده
     });
 
     return res.status(201).json({
@@ -32,6 +63,7 @@ const registerUser = async (req, res, next) => {
     next(error);
   }
 };
+
 
 const loginUser = async (req, res, next) => {
   try {
