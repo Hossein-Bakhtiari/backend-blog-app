@@ -8,7 +8,6 @@ import path from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
 import {
   errorResponserHandler,
   invalidPathHandler,
@@ -17,7 +16,7 @@ import {
 // Routes
 import userRoutes from "./routes/userRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
-
+import commentRoutes from "./routes/commentRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -43,10 +42,10 @@ app.get("/", (req, res) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/comments", commentRoutes);
 
 // static assets
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
-
 
 // Custom error handler
 app.use(invalidPathHandler);
