@@ -1,5 +1,6 @@
 import { uploadPicture } from "../middleware/uploadPictureMiddleware.js";
 import Post from "../models/Post.js";
+import Comment from "../models/Comment.js";
 import { fileRemover } from "../utils/fileRemover.js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -63,13 +64,13 @@ const updatePost = async (req, res, next) => {
             fileRemover(filename);
           }
           post.photo = req.file.filename;
-          handleUpdatePostData(req.body.document)
+          handleUpdatePostData(req.body.document);
         } else {
           let filename;
           filename = post.photo;
           post.photo = "";
           fileRemover(filename);
-          handleUpdatePostData(req.body.document)
+          handleUpdatePostData(req.body.document);
         }
       }
     });
@@ -78,4 +79,25 @@ const updatePost = async (req, res, next) => {
   }
 };
 
-export { createPost, updatePost };
+const deletePost = async (req, res, next) => {
+  try {
+    const post = await Post.findOneAndDelete({ slug: req.params.slug });
+
+    if (!post) {
+      const error = new Error("Post was not found");
+      return next(error);
+    }
+
+    fileRemover(post.photo);
+
+    await Comment.deleteMany({ post: post._id });
+
+    return res.json({
+      message: "Post is successfully deleted",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createPost, updatePost, deletePost };
