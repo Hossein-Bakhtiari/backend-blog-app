@@ -27,6 +27,25 @@ const createComment = async (req, res, next) => {
   }
 };
 
+const updateComment = async (req, res, next) => {
+  try {
+    const { desc, check } = req.body;
 
+    const comment = await Comment.findById(req.params.commentId);
 
-export {createComment}
+    if (!comment) {
+      const error = new Error("Comment was not found");
+      return next(error);
+    }
+
+    comment.desc = desc || comment.desc;
+    comment.check = typeof check !== "undefined" ? check : comment.check;
+
+    const updatedComment = await comment.save();
+    return res.json(updatedComment);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createComment, updateComment };
