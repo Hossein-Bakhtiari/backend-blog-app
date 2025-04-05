@@ -221,9 +221,9 @@ const getPost = async (req, res, next) => {
 const getAllPosts = async (req, res, next) => {
   try {
     const filter = req.query.searchKeyword;
-    // const categories = req.query.categories
-    //   ? req.query.categories.split(",")
-    //   : []; // Expecting categories to be comma-seperated
+    const categories = req.query.categories
+      ? req.query.categories.split(",")
+      : []; // Expecting categories to be comma-seperated
 
     let where = {};
 
@@ -231,9 +231,9 @@ const getAllPosts = async (req, res, next) => {
       where.title = { $regex: filter, $options: "i" };
     }
 
-    // if (categories.length > 0) {
-    //   where.categories = { $in: categories };
-    // }
+    if (categories.length > 0) {
+      where.categories = { $in: categories };
+    }
 
     let query = Post.find(where);
     const page = parseInt(req.query.page) || 1;
@@ -262,10 +262,10 @@ const getAllPosts = async (req, res, next) => {
           path: "user",
           select: ["avatar", "name", "verified"],
         },
-        // {
-        //   path: "categories",
-        //   select: ["title"],
-        // },
+        {
+          path: "categories",
+          select: ["title"],
+        },
       ])
       .sort({ updatedAt: "desc" });
 
