@@ -107,10 +107,10 @@ const getPost = async (req, res, next) => {
         path: "user",
         select: ["avatar", "name"],
       },
-      // {
-      //   path: "categories",
-      //   select: ["title"],
-      // },
+      {
+        path: "categories",
+        select: ["title"],
+      },
       {
         path: "comments",
         match: {
@@ -274,6 +274,5 @@ const getAllPosts = async (req, res, next) => {
     next(error);
   }
 };
-
 
 export { createPost, updatePost, deletePost, getPost, getAllPosts };
