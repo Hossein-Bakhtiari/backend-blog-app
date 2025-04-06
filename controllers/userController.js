@@ -116,22 +116,38 @@ const userProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
   try {
-    let user = await User.findById(req.user._id);
+    const userIdToUpdate = req.params.userId;
+
+    let userId = req.user._id;
+
+    if (!req.user.admin && userId !== userIdToUpdate) {
+      let error = new Error("Forbidden resource");
+      error.statusCode = 403;
+      throw error;
+    }
+
+    let user = await User.findById(userIdToUpdate);
+
     if (!user) {
-      throw new Error("User not found..!");
+      throw new Error("User not found");
+    }
+
+    if (typeof req.body.admin !== "undefined" && req.user.admin) {
+      user.admin = req.body.admin;
     }
 
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
     if (req.body.password && req.body.password.length < 6) {
-      throw new Error("Password lengt must be at least 6 charecter");
+      throw new Error("Password length must be at least 6 character");
     } else if (req.body.password) {
       user.password = req.body.password;
     }
 
     const updatedUserProfile = await user.save();
+
     res.json({
-      _id: updatedUserProfile.id,
+      _id: updatedUserProfile._id,
       avatar: updatedUserProfile.avatar,
       name: updatedUserProfile.name,
       email: updatedUserProfile.email,
